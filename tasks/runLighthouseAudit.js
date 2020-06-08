@@ -1,7 +1,7 @@
 const lighthouse = require("lighthouse");
 const chromeLauncher = require("chrome-launcher");
 const ReportGenerator = require("lighthouse/lighthouse-core/report/report-generator");
-const mesg = require("mesg-js").service();
+const liteflow = require("@liteflow/service").service();
 
 const chromeFlags = [
   "--disable-gpu",
@@ -11,7 +11,7 @@ const chromeFlags = [
 ];
 
 const handler = async ({ url }, { success }) => {
-  await mesg.emitEvent("audit-start", { target: url });
+  await liteflow.emitEvent("audit-start", { target: url });
 
   const chrome = await chromeLauncher.launch({ chromeFlags });
   const results = await lighthouse(url, { port: chrome.port });
@@ -19,7 +19,7 @@ const handler = async ({ url }, { success }) => {
 
   const html = ReportGenerator.generateReport(results.lhr, "html");
 
-  await mesg.emitEvent("audit-end", { target: url });
+  await liteflow.emitEvent("audit-end", { target: url });
   success({
     message: "Completed Lighouse audit!",
     htmlResults: html,
